@@ -1,0 +1,4 @@
+fn main() {
+	let a = 0x00;
+	println!("Hello, World!");
+}
