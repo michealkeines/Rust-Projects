@@ -5,7 +5,9 @@ Simple application to resolve hostname using build-in relsover and make http req
 ## Features:
 
 DNS - makes manual DNS query and resolves the hostname, custome dns server could be specified
+
 Interface - custom TAP interface support
+
 HTTP - Assumbles sockect and http request and responses manually
 
 ## setup
