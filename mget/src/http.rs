@@ -78,7 +78,7 @@ pub fn get(tap: TapInterface, mac: EthernetAddress, addr: IpAddr, url: Url) -> R
 
     let mut state = HttpState::Connect;
     'http: loop {
-        eprintln!("loop again!;");
+       // eprintln!("loop again!;");
         let timestamp = Instant::now();
         match iface.poll(&mut sockets, timestamp) {
             Ok(_) => {},
@@ -90,13 +90,13 @@ pub fn get(tap: TapInterface, mac: EthernetAddress, addr: IpAddr, url: Url) -> R
         eprintln!("{:?}", state);
         {
             let mut socket = sockets.get::<TcpSocket>(tcp_handle);
-            println!("{}",socket.may_send());
+           // println!("{}",socket.may_send());
             state = match state {
                 HttpState::Connect if !socket.is_active() => {
                     eprintln!("connecting");
                    // let addr = IpAddr::V4(Ipv4Addr::new(142,250,205,238)); 
                     socket.connect((addr, 80), random_port())?;
-                    eprintln!("test");
+                 //   eprintln!("test");
                     HttpState::Request
                 }
                 HttpState::Request if socket.may_send() => {
@@ -118,7 +118,7 @@ pub fn get(tap: TapInterface, mac: EthernetAddress, addr: IpAddr, url: Url) -> R
                     break 'http;
                 }
                 _ => {
-                    eprintln!("am i here?;");
+                   // eprintln!("am i here?;");
                     state}
             }
         }
