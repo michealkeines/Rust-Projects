@@ -41,5 +41,6 @@ fn main() {
     
     let addr = dns::resolve(dns_server_text, domain_name).unwrap().unwrap();
     let mac = ethernet::MacAddress::new().into();
+    println!("mac: {:?}, addr: {:?}, url: {:?}", mac, addr, url);
     http::get(tap, mac, addr, url).unwrap();
 }

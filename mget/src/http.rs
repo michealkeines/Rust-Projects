@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::fmt;
-use std::net::IpAddr;
+use std::net::{IpAddr, Ipv4Addr};
 use std::os::unix::io::AsRawFd;
 
 use smoltcp::iface::{EthernetInterfaceBuilder, NeighborCache, Routes};
@@ -53,11 +53,12 @@ pub fn get(tap: TapInterface, mac: EthernetAddress, addr: IpAddr, url: Url) -> R
     let tcp_rx_buffer = TcpSocketBuffer::new(vec![0; 1024]);
     let tcp_tx_buffer = TcpSocketBuffer::new(vec![0; 1024]);
     let tcp_socket = TcpSocket::new(tcp_rx_buffer, tcp_tx_buffer);
+    
     let ip_addrs = [IpCidr::new(IpAddress::v4(192, 168, 42, 1), 24)];
 
     let fd = tap.as_raw_fd();
     let mut routes = Routes::new(BTreeMap::new());
-    let default_gateway = Ipv4Address::new(192, 168, 42, 100);
+    let default_gateway = Ipv4Address::new(198,168,1,5);
     routes.add_default_ipv4_route(default_gateway).unwrap();
     let mut iface = EthernetInterfaceBuilder::new(tap)
         .ethernet_addr(mac)
@@ -77,6 +78,7 @@ pub fn get(tap: TapInterface, mac: EthernetAddress, addr: IpAddr, url: Url) -> R
 
     let mut state = HttpState::Connect;
     'http: loop {
+        eprintln!("loop again!;");
         let timestamp = Instant::now();
         match iface.poll(&mut sockets, timestamp) {
             Ok(_) => {},
@@ -85,14 +87,16 @@ pub fn get(tap: TapInterface, mac: EthernetAddress, addr: IpAddr, url: Url) -> R
                 eprintln!("error: {:?}", e);
             }
         }
-
+        eprintln!("{:?}", state);
         {
             let mut socket = sockets.get::<TcpSocket>(tcp_handle);
-
+            println!("{}",socket.may_send());
             state = match state {
                 HttpState::Connect if !socket.is_active() => {
                     eprintln!("connecting");
+                   // let addr = IpAddr::V4(Ipv4Addr::new(142,250,205,238)); 
                     socket.connect((addr, 80), random_port())?;
+                    eprintln!("test");
                     HttpState::Request
                 }
                 HttpState::Request if socket.may_send() => {
@@ -113,7 +117,9 @@ pub fn get(tap: TapInterface, mac: EthernetAddress, addr: IpAddr, url: Url) -> R
                     eprintln!("recieved complete response");
                     break 'http;
                 }
-                _ => state
+                _ => {
+                    eprintln!("am i here?;");
+                    state}
             }
         }
         phy_wait(fd, iface.poll_delay(&sockets, timestamp)).expect("wait error");
