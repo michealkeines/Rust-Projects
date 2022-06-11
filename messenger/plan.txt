@@ -1,0 +1,7 @@
+Native GUI app - GTK framwork
+
+
+now i have TCP listener that starts in a thread and write anything it receives to a file
+
+
+we can now read that file and respond to its messages

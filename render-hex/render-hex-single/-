@@ -1,0 +1,5 @@
+<svg height="400" style='style="outline: 5px solid #800000;"' viewBox="0 0 400 400" width="400" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#ffffff" height="400" width="400" x="0" y="0"/>
+<path d="M200,200 L200,360 L200,360 L160,360 L80,360 L-80,360 L320,360 L320,360 L320,360 L400,360 L480,360 L200,360 L200,600 L200,-40 L200,200 L-80,200 L440,200 L200,200 L200,280 L200,280 L200,280 L200,-80 L200,200 L200,200 L200,200 L200,200 L200,160 L200,160 L560,160 L160,160 L40,160 L-320,160 L360,160 L360,160 L360,360 L360,640 L360,200 L720,200 L200,200 L200,-120 L200,320" fill="none" stroke="#2f2f2f" stroke-opacity="0.9" stroke-width="5"/>
+<rect fill="#ffffff" full-opacity="0.0" height="400" stroke="#cccccc" stroke-width="15" width="400" x="0" y="0"/>
+</svg>
