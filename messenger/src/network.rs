@@ -54,41 +54,41 @@ impl NetworkHandler {
     }
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
+// #[cfg(test)]
+// mod test {
+//     use super::*;
 
-    #[test]
-    fn addrs_check() {
-        let ip = "127.0.0.1:9000";
-        let handler = NetworkHandler::new(ip);
-        let tmp_addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127,0,0,1), 9000));
-        assert_eq!(handler.listener.local_addr().unwrap(), tmp_addr);
-    }
-    #[test]
-    fn write_to_stream() {
-        let handler = NetworkHandler::new("127.0.0.1:9000");
-        handler.listen();
-        match TcpStream::connect("127.0.0.1:9000") {
-            Ok(mut stream) => {
-                stream.write(&"test".as_bytes()).unwrap();
-            },
-            _ => {
-                eprintln!("couldnt connect to ip:port");
+//     #[test]
+//     fn addrs_check() {
+//         let ip = "127.0.0.1:9000";
+//         let handler = NetworkHandler::new(ip);
+//         let tmp_addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127,0,0,1), 9000));
+//         assert_eq!(handler.listener.local_addr().unwrap(), tmp_addr);
+//     }
+//     #[test]
+//     fn write_to_stream() {
+//         let handler = NetworkHandler::new("127.0.0.1:9000");
+//         handler.listen();
+//         match TcpStream::connect("127.0.0.1:9000") {
+//             Ok(mut stream) => {
+//                 stream.write(&"test".as_bytes()).unwrap();
+//             },
+//             _ => {
+//                 eprintln!("couldnt connect to ip:port");
                 
-            }
+//             }
 
-        };
-        match TcpStream::connect("127.0.0.1:9000") {
-            Ok(mut stream) => {
-                stream.write(&"how are you?".as_bytes()).unwrap();
-            },
-            _ => {
-                eprintln!("couldnt connect to ip:port");
+//         };
+//         match TcpStream::connect("127.0.0.1:9000") {
+//             Ok(mut stream) => {
+//                 stream.write(&"how are you?".as_bytes()).unwrap();
+//             },
+//             _ => {
+//                 eprintln!("couldnt connect to ip:port");
                 
-            }
+//             }
 
-        };
+//         };
 
-    }
-}
+//     }
+// }

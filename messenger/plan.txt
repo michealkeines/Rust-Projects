@@ -5,3 +5,7 @@ now i have TCP listener that starts in a thread and write anything it receives t
 
 
 we can now read that file and respond to its messages
+
+updates:
+
+now i have a server that wrapes every stream into a client and handles them in separate threads
