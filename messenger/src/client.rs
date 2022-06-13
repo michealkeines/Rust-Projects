@@ -14,7 +14,7 @@ impl Client {
     }
 
     pub fn read_stream(&mut self) -> Vec<u8> {
-        let mut buf: Vec<u8> = vec![0;5];
+        let mut buf: Vec<u8> = vec![0;250];
         let stream = &mut self.stream;
         stream.set_read_timeout(Some(std::time::Duration::from_secs(3)));
         let result = stream.read_exact(&mut buf);

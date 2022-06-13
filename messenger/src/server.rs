@@ -63,20 +63,21 @@ impl Server {
                                 let string = std::str::from_utf8_mut(&mut message[..]).unwrap();
                                 lock_receiver.write_stream(string);
                                 }
-                                thread::sleep(time::Duration::from_secs(1));
+                                thread::sleep(time::Duration::from_secs(3));
                                 }
                             });
                             let sender = Arc::clone(&d[1]);
                             let receiver = Arc::clone(&d[0]);
                             thread::spawn(move|| {
                                 loop {
+                                    thread::sleep(time::Duration::from_secs(6));
                                     {let mut lock_sender = sender.lock().unwrap();
                                     let mut lock_receiver = receiver.lock().unwrap();
                                     let mut message = lock_sender.read_stream();
                                     let string = std::str::from_utf8_mut(&mut message[..]).unwrap();
                                     lock_receiver.write_stream(string);
                                     }
-                                    thread::sleep(time::Duration::from_secs(2));
+                                    
                                     }
                             });
                             
@@ -130,70 +131,70 @@ impl Server {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    // use super::*;
 
-    #[test]
-    fn write_to_stream() {
-        let mut handler = Server::new("127.0.0.1:9000");
-        handler.listen();
-        thread::spawn(move || {
-            thread::sleep(time::Duration::from_millis(500));
-            let mut stream = TcpStream::connect("127.0.0.1:9000").expect("couldnt connect to server");
-            stream.set_nonblocking(true).expect("nonblocking failed");
+    // #[test]
+    // fn write_to_stream() {
+    //     let mut handler = Server::new("127.0.0.1:9000");
+    //     handler.listen();
+    //     thread::spawn(move || {
+    //         thread::sleep(time::Duration::from_millis(500));
+    //         let mut stream = TcpStream::connect("127.0.0.1:9000").expect("couldnt connect to server");
+    //         stream.set_nonblocking(true).expect("nonblocking failed");
 
-            stream.write(&"test".as_bytes()).unwrap();
-            println!("client 1 is connected");
+    //         stream.write(&"test".as_bytes()).unwrap();
+    //         println!("client 1 is connected");
             
-            // let mut buf = vec![];
-            // loop {
-            // println!("client 1 is going to read its stream");
-            //     match stream.read_to_end(&mut buf) {
-            //         Ok(_) => {
-            //             println!("{:?}", std::str::from_utf8_mut(&mut buf[..]));
-            //             thread::sleep(time::Duration::from_secs(5));
-            //         },
-            //         _ => eprintln!("io error")
-            //     }
-            //     thread::sleep(time::Duration::from_secs(40));
-            // }
-        });
-        thread::spawn(move || {
-            thread::sleep(time::Duration::from_millis(700));
-            let mut stream = TcpStream::connect("127.0.0.1:9000").expect("couldnt connect to server");
-            stream.set_nonblocking(true).expect("nonblocking failed");
-            stream.write(&"how are you?".as_bytes()).unwrap();
-            println!("client 2 is connected");
+    //         // let mut buf = vec![];
+    //         // loop {
+    //         // println!("client 1 is going to read its stream");
+    //         //     match stream.read_to_end(&mut buf) {
+    //         //         Ok(_) => {
+    //         //             println!("{:?}", std::str::from_utf8_mut(&mut buf[..]));
+    //         //             thread::sleep(time::Duration::from_secs(5));
+    //         //         },
+    //         //         _ => eprintln!("io error")
+    //         //     }
+    //         //     thread::sleep(time::Duration::from_secs(40));
+    //         // }
+    //     });
+    //     thread::spawn(move || {
+    //         thread::sleep(time::Duration::from_millis(700));
+    //         let mut stream = TcpStream::connect("127.0.0.1:9000").expect("couldnt connect to server");
+    //         stream.set_nonblocking(true).expect("nonblocking failed");
+    //         stream.write(&"how are you?".as_bytes()).unwrap();
+    //         println!("client 2 is connected");
             
-            // let mut buf = vec![];
+    //         // let mut buf = vec![];
             
-            // loop {
-            //     println!("client 2 is goinf to read tis stream");
+    //         // loop {
+    //         //     println!("client 2 is goinf to read tis stream");
 
-            //     match stream.read_to_end(&mut buf) {
-            //         Ok(_) => {
-            //             println!("{:?}", std::str::from_utf8_mut(&mut buf[..]));
-            //             thread::sleep(time::Duration::from_secs(5));
-            //         },
-            //         _ => eprintln!("io error")
-            //     }
-            //     thread::sleep(time::Duration::from_secs(40));
-            // }
-        });
+    //         //     match stream.read_to_end(&mut buf) {
+    //         //         Ok(_) => {
+    //         //             println!("{:?}", std::str::from_utf8_mut(&mut buf[..]));
+    //         //             thread::sleep(time::Duration::from_secs(5));
+    //         //         },
+    //         //         _ => eprintln!("io error")
+    //         //     }
+    //         //     thread::sleep(time::Duration::from_secs(40));
+    //         // }
+    //     });
 
-        // loop {
-            thread::sleep(time::Duration::from_secs(5));
-            let mut clients = handler.clients.lock().unwrap();
-            println!("{:?}",clients);
+    //     // loop {
+    //         thread::sleep(time::Duration::from_secs(5));
+    //         let mut clients = handler.clients.lock().unwrap();
+    //         println!("{:?}",clients);
         
-            for v in clients.iter_mut() {
-                let val: Vec<u8> = v.read_stream();
-                println!("read stream: {:?}",std::str::from_utf8(&val[..]));
-                v.write_stream("Micheal here!");
-            }
-            println!("here written to both clients")
-        // }
+    //         for v in clients.iter_mut() {
+    //             let val: Vec<u8> = v.read_stream();
+    //             println!("read stream: {:?}",std::str::from_utf8(&val[..]));
+    //             v.write_stream("Micheal here!");
+    //         }
+    //         println!("here written to both clients")
+    //     // }
     
-    }
+    // }
 
     // fn pass_message_between_client() {
     //     let sender = Client::new(stream: TcpStream)
