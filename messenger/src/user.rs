@@ -84,13 +84,32 @@ impl User {
        // println!("written to stream");
     }
 
-    pub fn read_stream(&mut self) -> Vec<u8> {
-        let mut temp: Vec<u8> = vec![0;250];
-        let mut lock = self.stream.lock().unwrap();
-        lock.set_read_timeout(Some(time::Duration::from_secs(5)));
-        lock.read_exact(&mut temp[..]);
-        let temp = strip_tail(temp);
-        return temp;
+    pub fn read_stream(&mut self, messages: &Arc<Mutex<Vec<Vec<u8>>>>) {
+        let temp_stream = Arc::clone(&mut self.stream);
+        let temp_messages = Arc::clone(messages);
+        std::thread::spawn(move || {
+            loop {
+            let mut temp: Vec<u8> = vec![0;250];
+            {
+            let mut lock_stream = temp_stream.lock().unwrap();
+            
+            lock_stream.set_read_timeout(Some(time::Duration::from_secs(5)));
+            lock_stream.read_exact(&mut temp[..]);
+            temp = strip_tail(temp);         
+            }
+            let mut t = false;
+            if temp.len() != 0 {
+                let mut lock_messages = temp_messages.lock().unwrap();
+                lock_messages.push(temp);
+                t = true;
+            }
+            if !t {
+            std::thread::sleep(time::Duration::from_secs(2));
+            }
+            
+            }
+        });
+
     }
 }
 

@@ -5,6 +5,7 @@ use std::thread;
 use std::time;
 use std::io::stdin;
 use std::sync::{Arc, Mutex};
+use std::sync::mpsc;
 
 
 fn main() {
@@ -34,19 +35,25 @@ fn main() {
             thread::sleep(time::Duration::from_secs(500));
         } else if mode == "client" {
             let mut user = User::new("127.0.0.1:9000").unwrap();
-            let mut inputs = vec![];
-            thread::spawn(|| {
-                let mut line = String::new();
-                print!("> ");
-                let val = stdin().read_line(&mut line).unwrap();
-                inputs.push(line);
-            });
+            let messages: Arc<Mutex<Vec<Vec<u8>>>> = Arc::new(Mutex::new(vec![]));
+            user.read_stream(&messages);
+            let mut count = 0;
             loop {
-                
-              //  thread::sleep(time::Duration::from_secs(2));
+                {
+               // println!("{:?}", messages);
+                let messages = &messages;
+                let lock = messages.lock().unwrap();
+                for i in count..lock.len() {
+                    let s = std::str::from_utf8(&lock[i]).unwrap();
+                    if s.len() != 0  {
+                        println!("Message ID: {} -> {}",count, s);
+                    }
+                    count += 1;
+                }
+                }
+                let mut line = String::new();
+                let v = std::io::stdin().read_line(&mut line).unwrap();
                 user.write_stream(&line);
-              //  thread::sleep(time::Duration::from_secs(2));
-
             }
 
         } else {
