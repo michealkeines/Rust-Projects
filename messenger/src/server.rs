@@ -63,14 +63,14 @@ impl Server {
                                 let string = std::str::from_utf8_mut(&mut message[..]).unwrap();
                                 lock_receiver.write_stream(string);
                                 }
-                                thread::sleep(time::Duration::from_secs(3));
+                                thread::sleep(time::Duration::from_millis(200));
                                 }
                             });
                             let sender = Arc::clone(&d[1]);
                             let receiver = Arc::clone(&d[0]);
                             thread::spawn(move|| {
                                 loop {
-                                    thread::sleep(time::Duration::from_secs(6));
+                                    thread::sleep(time::Duration::from_millis(250));
                                     {let mut lock_sender = sender.lock().unwrap();
                                     let mut lock_receiver = receiver.lock().unwrap();
                                     let mut message = lock_sender.read_stream();

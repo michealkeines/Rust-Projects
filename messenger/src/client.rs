@@ -16,7 +16,7 @@ impl Client {
     pub fn read_stream(&mut self) -> Vec<u8> {
         let mut buf: Vec<u8> = vec![0;250];
         let stream = &mut self.stream;
-        stream.set_read_timeout(Some(std::time::Duration::from_secs(3)));
+        stream.set_read_timeout(Some(std::time::Duration::from_millis(300)));
         let result = stream.read_exact(&mut buf);
         match result {
             Ok(_) => {},
@@ -26,6 +26,9 @@ impl Client {
     }
 
     pub fn write_stream(&mut self, message: &str) {
+        if message.len() == 0 {
+            return;
+        }
         let stream = &mut self.stream;
         let result = stream.write(message.as_bytes());
 

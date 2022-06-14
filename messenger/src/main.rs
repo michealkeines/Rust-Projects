@@ -16,9 +16,9 @@ fn main() {
         .get_matches();
     
         let mode = app.value_of("mode").unwrap();
-
+        let ip_port = app.value_of("server").unwrap();
         if mode == "server" {
-            let mut handler = Server::new("127.0.0.1:9000");
+            let mut handler = Server::new(ip_port);
             handler.listen();
             // loop {
             //     thread::sleep(time::Duration::from_secs(5));
@@ -34,9 +34,18 @@ fn main() {
            // handler.broadcast_client();
             thread::sleep(time::Duration::from_secs(500));
         } else if mode == "client" {
-            let mut user = User::new("127.0.0.1:9000").unwrap();
+            let mut user = User::new(ip_port).unwrap();
             let messages: Arc<Mutex<Vec<Vec<u8>>>> = Arc::new(Mutex::new(vec![]));
             user.read_stream(&messages);
+            let (tx, rx) = mpsc::channel();
+            thread::spawn(move ||{
+                loop {
+                    let mut line = String::new();
+                    
+                    let v = std::io::stdin().read_line(&mut line).unwrap();
+                    tx.send(line).unwrap();
+                }
+            });
             let mut count = 0;
             loop {
                 {
@@ -46,14 +55,17 @@ fn main() {
                 for i in count..lock.len() {
                     let s = std::str::from_utf8(&lock[i]).unwrap();
                     if s.len() != 0  {
-                        println!("Message ID: {} -> {}",count, s);
+                        println!("> {}",s);
                     }
                     count += 1;
                 }
                 }
-                let mut line = String::new();
-                let v = std::io::stdin().read_line(&mut line).unwrap();
-                user.write_stream(&line);
+                // let mut line = String::new();
+                // let v = std::io::stdin().read_line(&mut line).unwrap();
+                if let Ok(line) = rx.recv_timeout(time::Duration::from_millis(50))
+                {
+                    user.write_stream(&line);
+                }
             }
 
         } else {

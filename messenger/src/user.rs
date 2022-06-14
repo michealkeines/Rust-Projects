@@ -93,7 +93,7 @@ impl User {
             {
             let mut lock_stream = temp_stream.lock().unwrap();
             
-            lock_stream.set_read_timeout(Some(time::Duration::from_secs(5)));
+            lock_stream.set_read_timeout(Some(time::Duration::from_millis(150)));
             lock_stream.read_exact(&mut temp[..]);
             temp = strip_tail(temp);         
             }
@@ -104,7 +104,7 @@ impl User {
                 t = true;
             }
             if !t {
-            std::thread::sleep(time::Duration::from_secs(2));
+            std::thread::sleep(time::Duration::from_millis(100));
             }
             
             }
